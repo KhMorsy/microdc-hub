@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Supply Mix · MicroDC Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --accent:#E0703C; --ink:#222; --muted:#717171; --line:#EBEBEB; --good:#639922; --mid:#EF9F27; --bad:#E24B4A;
+         --wind:#3b82c4; --solar:#EF9F27; --other:#9aa0a6; --ppa:#639922; --grid:#9aa0a6; --onsite:#E0703C; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; overflow:hidden; background:#fff; color:var(--ink); font-family:"Manrope",-apple-system,system-ui,sans-serif; }
+  .wrap{ max-width:1320px; height:100vh; margin:0 auto; padding:12px; display:flex; flex-direction:column; gap:8px; }
+  header{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .logo{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:18px; }
+  .logo svg{ width:24px; height:24px; }
+  header .sub{ color:var(--muted); font-size:13px; font-weight:600; }
+  header .spacer{ flex:1; }
+  .badge{ background:#fff4ee; color:var(--accent); font-weight:800; padding:4px 10px; border-radius:999px; border:1px solid #f3d9cc; font-size:12px; }
+  a.link{ color:var(--accent); font-weight:700; cursor:pointer; font-size:12px; text-decoration:none; }
+  .controls{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .search input{ font:inherit; font-size:14px; padding:8px 14px; border:1px solid var(--line); border-radius:999px; width:160px; outline:none; }
+  .search input:focus{ border-color:var(--accent); }
+  .chip{ display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:6px 12px; }
+  .chip label{ font-size:11px; font-weight:700; color:var(--muted); }
+  .chip input[type=number]{ width:56px; font:inherit; font-size:13px; font-weight:700; border:0; outline:none; text-align:right; }
+  .chip .v{ font-size:11px; font-weight:800; }
+  .pill{ display:inline-block; font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px; background:#f4f4f4; color:var(--muted); }
+  .stage{ flex:1; min-height:0; display:flex; gap:10px; }
+  .card{ border:1px solid var(--line); border-radius:16px; padding:14px; background:#fff; }
+  .left{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .left h3{ margin:0 0 2px; font-size:15px; font-weight:800; }
+  .left .hint{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+  .bigmix{ display:flex; align-items:center; justify-content:center; gap:26px; margin:18px 0 22px; }
+  .bigmix svg{ width:170px; height:170px; }
+  .bigmix .leg{ display:flex; flex-direction:column; gap:9px; font-size:15px; color:var(--muted); }
+  .bigmix .leg b{ color:var(--ink); font-size:17px; }
+  .bigmix .leg i{ width:13px; height:13px; border-radius:4px; display:inline-block; margin-right:8px; vertical-align:middle; }
+  .sliders{ margin-top:8px; display:flex; flex-direction:column; gap:9px; }
+  .srow{ display:flex; align-items:center; gap:10px; font-size:13px; }
+  .srow .nm{ width:108px; font-weight:700; display:flex; align-items:center; gap:6px; }
+  .srow .nm i{ width:11px; height:11px; border-radius:3px; display:inline-block; }
+  .srow input[type=range]{ flex:1; accent-color:var(--accent); }
+  .srow .pct{ width:42px; text-align:right; font-weight:800; font-variant-numeric:tabular-nums; }
+  .side{ width:330px; flex:0 0 330px; display:flex; flex-direction:column; gap:10px; overflow:auto; }
+  .side h4{ margin:0 0 8px; font-size:14px; font-weight:800; }
+  .mix{ display:flex; align-items:center; gap:14px; }
+  .leg{ font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:4px; }
+  .leg b{ color:var(--ink); }
+  .leg i{ width:11px; height:11px; border-radius:3px; display:inline-block; margin-right:6px; vertical-align:middle; }
+  .vrow{ display:flex; justify-content:space-between; align-items:baseline; font-size:13px; padding:5px 0; }
+  .vrow .amt{ font-weight:800; font-variant-numeric:tabular-nums; }
+  .vsep{ border-top:1px solid var(--line); margin:6px 0; }
+  .big{ font-size:24px; font-weight:800; line-height:1; }
+  .estbig{ display:flex; align-items:baseline; gap:8px; margin-bottom:10px; }
+  .estbig .big{ font-size:32px; color:var(--accent); }
+  .estbig .estsub{ color:var(--muted); font-weight:700; font-size:13px; }
+  .confirm{ width:100%; background:var(--accent); color:#fff; border:0; border-radius:12px; padding:14px; font:inherit; font-size:15px; font-weight:800; cursor:pointer; }
+  .confirm:hover{ filter:brightness(.96); }
+  .delta{ font-size:12px; font-weight:700; }
+  .note{ color:var(--muted); font-size:11px; margin-top:6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="start.html" style="text-decoration:none;color:inherit"><svg viewBox="0 0 32 32" fill="none"><path d="M6 10l6-4 6 4-6 4-6-4z" fill="#E0703C"/><path d="M14 18l6-4 6 4-6 4-6-4z" fill="#222"/></svg>
+      Supply Mix <span class="sub">· how to power this site · grid / PPA / on-site</span></a>
+    <div class="spacer"></div>
+    <span class="badge" id="badge">connecting…</span>
+    <a class="link" href="start.html">⌂ Home</a>
+    <a class="link" id="back" href="sitescore.html">SiteScore →</a>
+  </header>
+  <div class="controls">
+    <div class="search"><input id="plz" placeholder="Postal code"></div>
+    <div class="chip"><label>Load</label><input type="number" id="kw" min="1" max="100000" value="30"><span class="v">kW</span></div>
+    <span class="pill" id="zlab">—</span>
+    <span class="pill" id="gridlab">grid: —</span>
+  </div>
+  <div class="stage">
+    <div class="card left">
+      <h3>Your supply mix <span style="font-weight:600;color:var(--muted);font-size:12px">· grid / PPA / on-site</span></h3>
+      <div class="hint">slide to adjust. the grid leg is real for this site; PPA and on-site are illustrative.</div>
+      <div class="bigmix"><svg id="donut" viewBox="0 0 92 92"></svg><div class="leg" id="donleg"></div></div>
+      <div class="sliders" id="sliders">
+        <div class="srow"><span class="nm"><i style="background:var(--grid)"></i>Grid</span><input type="range" id="s_grid" min="0" max="100" value="50"><span class="pct" id="p_grid">50%</span></div>
+        <div class="srow"><span class="nm"><i style="background:var(--ppa)"></i>PPA</span><input type="range" id="s_ppa" min="0" max="100" value="30"><span class="pct" id="p_ppa">30%</span></div>
+        <div class="srow"><span class="nm"><i style="background:var(--onsite)"></i>On-site</span><input type="range" id="s_onsite" min="0" max="100" value="20"><span class="pct" id="p_onsite">20%</span></div>
+      </div>
+    </div>
+    <div class="side">
+      <div class="card">
+        <h4>Cost estimate</h4>
+        <div class="estbig"><span class="big" id="estyr">—</span><span class="estsub">/ year · energy</span></div>
+        <div id="figures"></div>
+        <div class="note">grid leg = live wholesale + grid intensity for this zone. PPA = local average (varies by the renewable mix nearby), on-site ~€120/MWh levelized. illustrative.</div>
+      </div>
+      <button class="confirm" id="confirm">Confirm this plan &amp; open the map →</button>
+    </div>
+  </div>
+</div>
+<script>
+var BACKEND='http://localhost:8000';
+window.addEventListener('pageshow',function(e){ if(e.persisted) location.reload(); });   // clean state on back
+// illustrative source assumptions (cost eur/mwh, carbon gco2/kwh)
+var PPA={cost:75, carbon:30}, ONSITE={cost:120, carbon:40};
+var UTIL=0.9;                 // data centers run ~flat
+var node=null, mix={grid:50, ppa:30, onsite:20};
+
+function qpPlz(){ var m=location.search.match(/[?&]plz=([0-9]{4,5})/); return m?m[1]:'80331'; }
+function qp(n){ var m=location.search.match(new RegExp('[?&]'+n+'=([^&]+)')); return m?decodeURIComponent(m[1]):null; }
+function eur(n){ return '€'+Math.round(n).toLocaleString('en'); }
+function clamp(v){ return v<0?0:(v>100?100:v); }
+
+// auto-build the starting mix from the landing-page goal (green / price / both) + this zone's grid.
+// a clean grid (austria) means the grid leg is fine even for "green"; a dirty grid pushes off it.
+function optimize(){
+  var o=(qp('opt')||'green,price').split(','), green=o.indexOf('green')>=0, price=o.indexOf('price')>=0;
+  var dirty=(node?node.carbon_g_kwh:200) > 150;
+  if(green && !price) return dirty ? {grid:15,ppa:55,onsite:30} : {grid:55,ppa:30,onsite:15};
+  if(price && !green) return {grid:80,ppa:15,onsite:5};
+  return dirty ? {grid:45,ppa:35,onsite:20} : {grid:60,ppa:25,onsite:15};   // both / balanced
+}
+
+// keep the three shares summing to 100 by spreading the remainder across the other two
+function setShare(which, val){
+  val=clamp(val);
+  var others=['grid','ppa','onsite'].filter(function(k){return k!==which;});
+  var rem=100-val, so=mix[others[0]]+mix[others[1]];
+  if(so<=0){ mix[others[0]]=rem/2; mix[others[1]]=rem/2; }
+  else { mix[others[0]]=rem*mix[others[0]]/so; mix[others[1]]=rem*mix[others[1]]/so; }
+  mix[which]=val; render();
+}
+
+function legRow(c,label,val){ return '<span><i style="background:'+c+'"></i><b>'+Math.round(val*100)+'%</b> '+label+'</span>'; }
+
+function donut(segs){
+  var C=2*Math.PI*30, off=0, p='';
+  segs.forEach(function(s){ var len=s[1]*C;
+    p+='<circle cx="46" cy="46" r="30" fill="none" stroke="'+s[0]+'" stroke-width="15" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 46 46)"></circle>'; off+=len; });
+  document.getElementById('donut').innerHTML=p;
+}
+
+// blend the three sources into one cost (eur/mwh) and carbon (gco2/kwh)
+function blend(gc, gp){
+  var g=mix.grid/100, p=mix.ppa/100, o=mix.onsite/100;
+  return { bc: g*gc + p*PPA.carbon + o*ONSITE.carbon, bp: g*gp + p*PPA.cost + o*ONSITE.cost };
+}
+
+function render(){
+  if(!node) return;
+  ['grid','ppa','onsite'].forEach(function(k){
+    document.getElementById('s_'+k).value=Math.round(mix[k]);
+    document.getElementById('p_'+k).textContent=Math.round(mix[k])+'%';
+  });
+  PPA.cost = node.ppa_price || 75;          // local avg PPA price for this site (weighted by its renewable mix)
+  var gp=node.price_eur_mwh, gc=node.carbon_g_kwh;
+  var g=mix.grid/100, p=mix.ppa/100, o=mix.onsite/100;
+
+  // supply-mix donut = how you PROCURE power (grid / PPA / on-site). this is your decision —
+  // distinct from the "local generation nearby" donut on the map, which is about the location.
+  donut([['var(--grid)',g],['var(--ppa)',p],['var(--onsite)',o]]);
+  document.getElementById('donleg').innerHTML=legRow('var(--grid)','grid',g)+legRow('var(--ppa)','PPA',p)+legRow('var(--onsite)','on-site',o);
+
+  var b=blend(gc, gp);
+  // annual energy + euros/carbon
+  var kw=+document.getElementById('kw').value||30, mwh=kw*8760*UTIL/1000;
+  var euro=b.bp*mwh, tons=b.bp!=null? b.bc*mwh/1000 : 0;
+  document.getElementById('estyr').textContent=eur(euro);
+  // baseline = 100% grid
+  var base_cost=gp*mwh, base_carbon=gc*mwh/1000;
+  var dC=euro-base_cost, dK=tons-base_carbon;
+  function pctCut(now,base){ return base>0? Math.round((base-now)/base*100):0; }
+  var html='';
+  html+='<div class="vrow"><span>Local PPA price</span><span class="amt">'+Math.round(PPA.cost)+' €/MWh</span></div>';
+  html+='<div class="vrow"><span>Blended cost</span><span class="amt">'+Math.round(b.bp)+' €/MWh</span></div>';
+  html+='<div class="vrow"><span>Blended carbon</span><span class="amt">'+Math.round(b.bc)+' g/kWh</span></div>';
+  html+='<div class="vsep"></div>';
+  html+='<div class="vrow"><span>Annual energy <small style="color:var(--muted)">'+kw+'kW</small></span><span class="amt">'+Math.round(mwh).toLocaleString('en')+' MWh</span></div>';
+  html+='<div class="vrow"><span>Annual cost</span><span class="amt">'+eur(euro)+'</span></div>';
+  html+='<div class="vrow"><span>Annual carbon</span><span class="amt">'+Math.round(tons).toLocaleString('en')+' t</span></div>';
+  html+='<div class="vsep"></div>';
+  var cc=pctCut(b.bc,gc), col=dK<0?'var(--good)':'var(--bad)';
+  html+='<div class="vrow"><span>vs 100% grid</span><span class="delta" style="color:'+col+'">'+(cc>=0?'−'+cc+'% carbon':'+'+(-cc)+'% carbon')+', '+(dC>=0?'+'+eur(dC):'−'+eur(-dC))+'/yr</span></div>';
+  document.getElementById('figures').innerHTML=html;
+}
+
+function badge(ok){ var b=document.getElementById('badge');
+  if(ok){ b.textContent='LIVE · backend'; b.style.background='#eaf6ec'; b.style.color='#3b7d2f'; b.style.borderColor='#cfe7cd'; }
+  else { b.textContent='backend offline'; b.style.background='#fbe9e9'; b.style.color='#b53b3b'; b.style.borderColor='#f0cccc'; } }
+
+function load(){
+  var plz=(document.getElementById('plz').value||'').trim()||qpPlz();
+  fetch(BACKEND+'/nodes?plz='+plz).then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(fc){ if(!fc.features||!fc.features.length) throw 0;
+      node=fc.features[0].properties; badge(true);
+      document.getElementById('zlab').textContent='PLZ '+node.plz+(node.plz.length===4?' · AT':' · DE-LU');
+      document.getElementById('gridlab').textContent='grid: €'+node.price_eur_mwh+'/MWh · '+node.carbon_g_kwh+'g';
+      if(qp('opt')) mix=optimize();          // auto-build the starting mix from the landing-page goal
+      render();
+    }).catch(function(){ badge(false); document.getElementById('figures').innerHTML='<div style="color:#999;font-size:13px">start the backend on :8000 to build the mix.</div>'; });
+}
+
+if(qp('kw')) document.getElementById('kw').value=qp('kw');
+document.getElementById('plz').value=qpPlz();
+document.getElementById('plz').addEventListener('keydown',function(e){ if(e.key==='Enter') load(); });
+document.getElementById('kw').addEventListener('input',render);
+// confirm the plan -> open the map, centered on this site with this capacity
+document.getElementById('confirm').addEventListener('click',function(){
+  var plz=node?node.plz:qpPlz(), cap=qp('cap')||'container', opt=qp('opt')||'green,price';
+  location.href='sitescore.html?plz='+plz+'&cap='+cap+'&opt='+encodeURIComponent(opt)
+    +'&grid='+Math.round(mix.grid)+'&ppa='+Math.round(mix.ppa)+'&onsite='+Math.round(mix.onsite);
+});
+['grid','ppa','onsite'].forEach(function(k){
+  document.getElementById('s_'+k).addEventListener('input',function(e){ setShare(k, +e.target.value); });
+});
+load();
+</script>
+</body>
+</html>
