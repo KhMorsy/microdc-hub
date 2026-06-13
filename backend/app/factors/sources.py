@@ -11,7 +11,13 @@ os.makedirs(CACHE, exist_ok=True)
 UA = "microdc-hub/1.0 (hackathon data-center siting tool)"
 EC = "https://api.energy-charts.info"
 OVERPASS = "https://overpass-api.de/api/interpreter"
-BAV = (47.2, 8.9, 50.6, 13.9)   # bavaria bbox: south, west, north, east
+
+# OSM is fetched per region (south, west, north, east) and merged. add a region here to extend coverage;
+# the rest of the pipeline works on the merged points wherever they are.
+REGIONS = {
+    "bavaria": (47.2, 8.9, 50.6, 13.9),
+    "austria": (46.3, 9.5, 49.1, 17.2),
+}
 
 # lifecycle emission factors, gCO2eq/kWh, keyed by energy-charts production type (approx IPCC medians)
 EMIT = {
@@ -176,21 +182,28 @@ def _voltage_kv(tag):
     return (best / 1000.0) if best else 20.0
 
 
-# ---- spatial: substations across bavaria [lat, lon, kv] ----
-def substations():
-    def build():
-        s, w, n, e = BAV
-        q = '[out:json][timeout:160];nwr["power"="substation"](%f,%f,%f,%f);out center;' % (s, w, n, e)
+# query overpass once per region (each selector gets the region bbox), union, yield (lat, lon, tags).
+def _overpass_each(selectors):
+    for name, (s, w, n, e) in REGIONS.items():
+        bb = "(%f,%f,%f,%f)" % (s, w, n, e)
+        body = "".join("%s%s;" % (sel, bb) for sel in selectors)
+        q = '[out:json][timeout:160];(%s);out center;' % body
         d = _get_json(OVERPASS, data=urllib.parse.urlencode({"data": q}).encode(), timeout=180)
-        out = []
         for el in d.get("elements", []):
             c = el.get("center", {})
             lat = el.get("lat", c.get("lat"))
             lon = el.get("lon", c.get("lon"))
-            if lat is None or lon is None:
-                continue
-            out.append([round(lat, 4), round(lon, 4), _voltage_kv(el.get("tags", {}).get("voltage"))])
-        return out
+            if lat is not None and lon is not None:
+                yield round(lat, 4), round(lon, 4), el.get("tags", {})
+
+
+# ---- spatial: substations across all regions [lat, lon, kv], deduped on coordinate ----
+def substations():
+    def build():
+        seen = {}
+        for lat, lon, tags in _overpass_each(['nwr["power"="substation"]']):
+            seen[(lat, lon)] = [lat, lon, _voltage_kv(tags.get("voltage"))]
+        return list(seen.values())
     return _cached("substations", build, ttl=TTL_OSM)
 
 
@@ -199,29 +212,67 @@ def substations_hv():
     return _cached("substations_hv", lambda: [s for s in substations() if s[2] >= 110.0], ttl=TTL_OSM)
 
 
-# ---- spatial: heat off-takers across bavaria [lat, lon, weight] ----
+# ---- spatial: heat off-takers across all regions [lat, lon, weight], deduped on coordinate ----
 # hospitals + greenhouses + public baths = plausible buyers of waste heat. (private pools excluded: too noisy.)
 def heat_buyers():
     def build():
-        s, w, n, e = BAV
-        bb = "(%f,%f,%f,%f)" % (s, w, n, e)
-        q = ('[out:json][timeout:160];('
-             'nwr["amenity"="hospital"]%s;'
-             'nwr["landuse"="greenhouse_horticulture"]%s;'
-             'nwr["leisure"="water_park"]%s;'
-             'nwr["amenity"="public_bath"]%s;'
-             ');out center;') % (bb, bb, bb, bb)
-        d = _get_json(OVERPASS, data=urllib.parse.urlencode({"data": q}).encode(), timeout=180)
+        sels = ['nwr["amenity"="hospital"]', 'nwr["landuse"="greenhouse_horticulture"]',
+                'nwr["leisure"="water_park"]', 'nwr["amenity"="public_bath"]']
         wmap = {"hospital": 3.0, "greenhouse_horticulture": 2.0, "water_park": 2.0, "public_bath": 2.0}
-        out = []
-        for el in d.get("elements", []):
-            c = el.get("center", {})
-            lat = el.get("lat", c.get("lat"))
-            lon = el.get("lon", c.get("lon"))
-            if lat is None or lon is None:
-                continue
-            t = el.get("tags", {})
+        seen = {}
+        for lat, lon, t in _overpass_each(sels):
             kind = t.get("amenity") or t.get("landuse") or t.get("leisure")
-            out.append([round(lat, 4), round(lon, 4), wmap.get(kind, 1.0)])
-        return out
+            seen[(lat, lon)] = [lat, lon, wmap.get(kind, 1.0)]
+        return list(seen.values())
     return _cached("heat_buyers", build, ttl=TTL_OSM)
+
+
+import re
+
+# categorize an OSM plant/generator source into wind / solar / hydro / other (battery is storage, skip).
+def _gen_cat(src):
+    s = (src or "").lower()
+    if "wind" in s:
+        return "wind"
+    if "solar" in s or "photovoltaic" in s:
+        return "solar"
+    if "hydro" in s:
+        return "hydro"
+    if "battery" in s or "storage" in s:
+        return None
+    return "other"
+
+
+# parse an OSM power-output tag ("50 MW", "1.5 MW", "100 kW", "500 W", "2.3 MWp") -> MW. None if unparseable.
+def _parse_mw(s):
+    if not s:
+        return None
+    m = re.match(r"([0-9.]+)\s*([kKmMgG]?)[wW]", str(s).replace("p", "").strip())
+    if not m:
+        return None
+    mult = {"": 1e-6, "k": 1e-3, "m": 1.0, "g": 1000.0}[m.group(2).lower()]
+    try:
+        return float(m.group(1)) * mult
+    except ValueError:
+        return None
+
+
+# typical capacity (MW) when a plant has no output tag — rough, so MW totals are populated not blank.
+_DEF_MW = {"wind": 2.5, "solar": 1.0, "hydro": 0.6, "other": 4.0}
+
+
+# ---- spatial: power generation nearby [lat, lon, category, mw]. plants (farms) + wind/hydro generators.
+# individual rooftop solar (generator:source=solar) is excluded as noise; solar comes from solar farms (plants).
+def generators():
+    def build():
+        sels = ['nwr["power"="plant"]["plant:source"]',
+                'nwr["generator:source"="wind"]', 'nwr["generator:source"="hydro"]']
+        seen = {}
+        for lat, lon, t in _overpass_each(sels):
+            cat = _gen_cat(t.get("plant:source") or t.get("generator:source"))
+            if not cat:
+                continue
+            mw = _parse_mw(t.get("plant:output:electricity") or t.get("generator:output:electricity"))
+            seen[(lat, lon)] = [lat, lon, cat, round(mw if mw else _DEF_MW[cat], 3)]
+        return list(seen.values())
+    return _cached("generators", build, ttl=TTL_OSM)

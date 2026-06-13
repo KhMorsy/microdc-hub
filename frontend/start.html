@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MicroDC Hub · plan your site</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{ --accent:#E0703C; --ink:#222; --muted:#717171; --line:#EBEBEB; --good:#639922; --mid:#EF9F27; --bad:#E24B4A; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; min-height:100%; background:#faf7f5; color:var(--ink); font-family:"Manrope",-apple-system,system-ui,sans-serif; }
+  .wrap{ max-width:640px; margin:0 auto; padding:40px 20px 60px; }
+  .logo{ display:flex; align-items:center; gap:8px; font-weight:800; font-size:20px; margin-bottom:6px; }
+  .logo svg{ width:26px; height:26px; }
+  .tag{ color:var(--muted); font-size:15px; font-weight:600; margin-bottom:28px; }
+  .tag b{ color:var(--ink); }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px; box-shadow:0 6px 30px rgba(0,0,0,.04); }
+  .field{ margin-bottom:22px; }
+  .field:last-of-type{ margin-bottom:8px; }
+  .field > label{ display:block; font-size:13px; font-weight:800; margin-bottom:8px; }
+  .field .hint{ color:var(--muted); font-size:12px; font-weight:500; margin-left:6px; }
+  input.txt{ width:100%; font:inherit; font-size:16px; padding:12px 16px; border:1px solid var(--line); border-radius:12px; outline:none; }
+  input.txt:focus{ border-color:var(--accent); }
+  .pills{ display:flex; gap:8px; flex-wrap:wrap; }
+  .pill{ border:1px solid var(--line); background:#fff; border-radius:999px; padding:9px 14px; font:inherit; font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; }
+  .pill small{ font-weight:500; opacity:.7; }
+  .pill.on{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .seg{ display:flex; gap:8px; }
+  .opt{ flex:1; border:1px solid var(--line); background:#fff; border-radius:12px; padding:14px; cursor:pointer; text-align:left; }
+  .opt .t{ font-weight:800; font-size:14px; display:flex; align-items:center; gap:8px; }
+  .opt .d{ color:var(--muted); font-size:12px; margin-top:3px; }
+  .opt .dot{ width:15px; height:15px; border-radius:50%; border:2px solid var(--line); display:inline-block; position:relative; }
+  .opt.on{ border-color:var(--accent); background:#fff7f3; }
+  .opt.on .dot{ border-color:var(--accent); }
+  .opt.on .dot::after{ content:""; position:absolute; left:3px; top:3px; width:5px; height:5px; border-radius:50%; background:var(--accent); }
+  .rrow{ display:flex; align-items:center; gap:12px; }
+  .rrow input[type=range]{ flex:1; accent-color:var(--accent); }
+  .rrow .rv{ font-weight:800; min-width:60px; text-align:right; }
+  .go{ width:100%; margin-top:16px; background:var(--accent); color:#fff; border:0; border-radius:12px; padding:15px; font:inherit; font-size:15px; font-weight:800; cursor:pointer; }
+  .go:hover{ filter:brightness(.96); }
+  .err{ color:var(--bad); font-size:12px; font-weight:700; margin-top:8px; min-height:14px; }
+  .foot{ text-align:center; margin-top:18px; font-size:13px; }
+  .foot a{ color:var(--accent); font-weight:700; text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo"><svg viewBox="0 0 32 32" fill="none"><path d="M6 10l6-4 6 4-6 4-6-4z" fill="#E0703C"/><path d="M14 18l6-4 6 4-6 4-6-4z" fill="#222"/></svg> MicroDC Hub</div>
+  <div class="tag">Tell us about your site. We'll build the <b>supply mix</b> that powers it — then you can adjust it.</div>
+
+  <div class="card">
+    <div class="field">
+      <label>Size <span class="hint">how big is the data center</span></label>
+      <div class="pills" id="caps">
+        <button class="pill" data-cap="edge" data-kw="3">Edge <small>1–5 kW</small></button>
+        <button class="pill" data-cap="micro" data-kw="8">Micro <small>6–10 kW</small></button>
+        <button class="pill on" data-cap="container" data-kw="30">Container <small>10–50 kW</small></button>
+        <button class="pill" data-cap="small" data-kw="150">Small <small>50–250 kW</small></button>
+        <button class="pill" data-cap="campus" data-kw="500">Campus <small>250 kW+</small></button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Optimize for</label>
+      <div class="seg" id="opts">
+        <div class="opt on" data-opt="green"><div class="t"><span class="dot"></span>Greenness</div><div class="d">lowest carbon</div></div>
+        <div class="opt" data-opt="price"><div class="t"><span class="dot"></span>Price</div><div class="d">cheapest to run</div></div>
+        <div class="opt" data-opt="both"><div class="t"><span class="dot"></span>Both</div><div class="d">balanced mix</div></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Service radius <span class="hint">how far you'll reach users / source power (latency)</span></label>
+      <div class="rrow"><input type="range" id="radius" min="5" max="100" step="5" value="25"><span class="rv" id="rv">25 km</span></div>
+    </div>
+
+    <div class="field">
+      <label>Where <span class="hint">postal code — optional, add it to localize the grid &amp; nearby power</span></label>
+      <input class="txt" id="plz" inputmode="numeric" placeholder="e.g. 80331 or 1010 (optional)">
+    </div>
+
+    <button class="go" id="go">Build my supply mix →</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="foot">or <a href="sitescore.html">explore the whole map →</a></div>
+</div>
+<script>
+  // reload fresh if reached via the browser back/forward cache (clean state every time)
+  window.addEventListener('pageshow',function(e){ if(e.persisted) location.reload(); });
+  var sel={ cap:'container', kw:30, opt:'green' };
+  document.getElementById('caps').addEventListener('click',function(e){
+    var b=e.target.closest('.pill'); if(!b) return;
+    document.querySelectorAll('#caps .pill').forEach(function(x){x.classList.remove('on');}); b.classList.add('on');
+    sel.cap=b.dataset.cap; sel.kw=+b.dataset.kw;
+  });
+  // greenness / price / both (pick one)
+  document.getElementById('opts').addEventListener('click',function(e){
+    var b=e.target.closest('.opt'); if(!b) return;
+    document.querySelectorAll('#opts .opt').forEach(function(x){x.classList.remove('on');}); b.classList.add('on');
+    sel.opt=b.dataset.opt;
+  });
+  var radius=document.getElementById('radius');
+  radius.addEventListener('input',function(){ document.getElementById('rv').textContent=radius.value+' km'; });
+  document.getElementById('plz').addEventListener('keydown',function(e){ if(e.key==='Enter') go(); });
+  document.getElementById('go').addEventListener('click',go);
+  function go(){
+    var plz=(document.getElementById('plz').value||'').trim();
+    if(plz && !/^[0-9]{4,5}$/.test(plz)){ document.getElementById('err').textContent='Postal code must be 4 or 5 digits (or leave it blank).'; return; }
+    var opt = sel.opt==='both' ? 'green,price' : sel.opt;   // "both" -> balanced
+    var q='kw='+sel.kw+'&cap='+sel.cap+'&opt='+opt+'&radius='+radius.value+(plz?'&plz='+plz:'');
+    location.href='supply.html?'+q;
+  }
+</script>
+</body>
+</html>

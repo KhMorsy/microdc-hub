@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .optimizer import recommend
 from .telemetry import monitor
 from .scoring import score_collection, build_weights
-from . import score_plz
+from . import score_plz, solar
 from .factors import carbon as carbon_f
 
 HERE = os.path.dirname(__file__)
@@ -117,6 +117,22 @@ def nodes(plz: Optional[str] = None, kw: Optional[int] = None, zero: bool = Fals
     if capacity is not None:
         return score_collection(data, capacity=capacity, shiftable=shiftable)
     return data
+
+
+# best rooftop-solar buildings in a postal code (Google Solar API). needs GOOGLE_SOLAR_API_KEY.
+@app.get("/solar-sites/{plz}")
+def solar_sites(plz: str, n: int = 3):
+    _maybe_reload()
+    if plz not in INDEX:
+        raise HTTPException(404, "plz not found")
+    key = os.getenv("GOOGLE_SOLAR_API_KEY")
+    if not key:
+        raise HTTPException(503, "GOOGLE_SOLAR_API_KEY not set on the backend")
+    ring = INDEX[plz]["geometry"]["coordinates"][0]   # [[lon, lat], ...]
+    lons = [c[0] for c in ring]
+    lats = [c[1] for c in ring]
+    bbox = (min(lats), min(lons), max(lats), max(lons))   # s, w, n, e — the postal-code box
+    return {"plz": plz, "sites": solar.rank_sites(bbox, key, n=n)}
 
 
 # inspect the dynamic weight mix for a given case (capacity + shiftable), without the node payload.

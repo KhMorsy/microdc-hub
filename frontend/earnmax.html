@@ -60,11 +60,12 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="logo"><svg viewBox="0 0 32 32" fill="none"><path d="M6 10l6-4 6 4-6 4-6-4z" fill="#E0703C"/><path d="M14 18l6-4 6 4-6 4-6-4z" fill="#222"/></svg>
-      EarnMax <span class="sub">· run the site for maximum value · 24h plan</span></div>
+    <a class="logo" href="start.html" style="text-decoration:none;color:inherit"><svg viewBox="0 0 32 32" fill="none"><path d="M6 10l6-4 6 4-6 4-6-4z" fill="#E0703C"/><path d="M14 18l6-4 6 4-6 4-6-4z" fill="#222"/></svg>
+      EarnMax <span class="sub">· run the site for maximum value · 24h plan</span></a>
     <div class="spacer"></div>
     <span class="badge" id="badge">connecting…</span>
-    <a class="link" id="back" href="sitescore.html">← back to SiteScore</a>
+    <a class="link" href="start.html">⌂ Home</a>
+    <a class="link" id="back" href="sitescore.html">SiteScore →</a>
   </header>
   <div class="controls">
     <div class="search"><input id="plz" placeholder="Postal code, e.g. 80331"></div>
@@ -100,10 +101,12 @@
 </div>
 <script>
 var BACKEND='http://localhost:8000';
+window.addEventListener('pageshow',function(e){ if(e.persisted) location.reload(); });   // clean state on back
 // illustrative earnmax subscription, shown so the net math is transparent
 var FEE_EUR_MONTH=290;
 
-function qpPlz(){ var m=location.search.match(/[?&]plz=([0-9]{5})/); return m?m[1]:'80331'; }
+function qpPlz(){ var m=location.search.match(/[?&]plz=([0-9]{4,5})/); return m?m[1]:'80331'; }
+function qp(n){ var m=location.search.match(new RegExp('[?&]'+n+'=([^&]+)')); return m?decodeURIComponent(m[1]):null; }
 function gv(id){ return +document.getElementById(id).value; }
 function eur(n){ return '€'+n.toLocaleString('en',{maximumFractionDigits:0}); }
 function eur1(n){ return '€'+n.toFixed(1); }
@@ -200,6 +203,7 @@ function load(){
 }
 
 document.getElementById('plz').value=qpPlz();
+if(qp('kw')) document.getElementById('kw').value=qp('kw');   // carry the capacity's load from the map
 document.getElementById('plz').addEventListener('keydown',function(e){ if(e.key==='Enter') load(); });
 document.getElementById('kw').addEventListener('change',load);
 document.getElementById('shift').addEventListener('input',function(e){ document.getElementById('shift_v').textContent=e.target.value; });

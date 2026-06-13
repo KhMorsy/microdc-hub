@@ -1,12 +1,12 @@
 # earnmax forecast + greedy load-shifting. the value-stack euros are illustrative; price + carbon are REAL.
-from .factors import sources
+from .factors import sources, zones
 
 
-# real 24h day-ahead price + carbon curve for the zone (energy-charts).
-# national today, so the same shape per plz; the value stack still scales with kw/shiftable.
+# real 24h day-ahead price + carbon curve for the postal code's bidding zone (energy-charts).
+# a bavarian plz gets DE-LU prices, an austrian plz gets AT prices.
 def day_profile(plz):
-    prices = sources.price_curve()
-    carbon = sources.carbon_curve()
+    prices = sources.price_curve(zones.zone_for(plz))
+    carbon = sources.carbon_curve(zones.country_for(plz))
     return [{"t": "%02d:00" % h, "price_eur_mwh": prices[h], "carbon_g_kwh": carbon[h]} for h in range(24)]
 
 

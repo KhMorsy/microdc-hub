@@ -1,16 +1,25 @@
 # maps a postal code to its electricity bidding zone + country.
-# today everything is bavaria -> DE-LU / de, so price/carbon come out uniform (neutral 50 after rank).
-# EXTENSION POINT: when adding regions in other bidding zones, return the right zone/country here
-# (e.g. austrian plz -> "AT"/"at", french -> "FR"/"fr"). price/carbon then differ per region and the
-# map gains a real spatial price/carbon signal automatically — no other code changes needed.
+# bavaria (germany) uses 5-digit PLZ -> DE-LU / de; austria uses 4-digit PLZ -> AT / at.
+# length cleanly separates them (no numeric overlap). add more regions here as they come.
+#
+# EXTENSION POINT: with >1 bidding zone in the set, price/carbon are no longer uniform, so they
+# stop collapsing to the neutral 50 and become real spatial signals automatically.
 
-DEFAULT_ZONE = "DE-LU"
-DEFAULT_COUNTRY = "de"
+ZONES = {
+    "DE-LU": {"len": 5, "country": "de"},   # germany (bavaria)
+    "AT":    {"len": 4, "country": "at"},   # austria
+}
+_BY_LEN = {z["len"]: (name, z["country"]) for name, z in ZONES.items()}
+DEFAULT = ("DE-LU", "de")
+
+
+def _lookup(plz):
+    return _BY_LEN.get(len(str(plz).strip()), DEFAULT)
 
 
 def zone_for(plz):
-    return DEFAULT_ZONE
+    return _lookup(plz)[0]
 
 
 def country_for(plz):
-    return DEFAULT_COUNTRY
+    return _lookup(plz)[1]
