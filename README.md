@@ -15,10 +15,14 @@ Pitch: *"Decide once with SiteScore. Earn every day with EarnMax — that's Micr
 
 | Path | Purpose |
 |---|---|
-| [index.html](index.html) | Slide deck (10 slides). Open in browser; ↑/↓ to navigate. |
+| [index.html](index.html) | Full product slide deck (10 slides). Open in browser; ↑/↓ to navigate. |
+| [pitch-deck.html](pitch-deck.html) | Pitch-video deck for Acts 1–3 (problem → solution framing, no live demo) with built-in zoom/pan motion. For recording narration in Loom. |
+| [VO_TELEPROMPTER.md](VO_TELEPROMPTER.md) | Voiceover script for Acts 1–3, slide-by-slide, timed to ~2 min for teleprompter use. |
 | [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) | Problem, solution, scoring, architecture, demo script — **start here** |
+| [PITCH_SCRIPT.md](PITCH_SCRIPT.md) | 4-minute pitch script & storyline (problem, vision, solution, live demo) |
 | [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Data contracts, datasets, parallel workstreams, 5-hour build plan |
 | [assets/](assets/) | UI mocks (`mock-sitescore.png`, `mock-earnmax.png`) |
+| [assets/video/](assets/video/) | Pitch-video frames + [`SHOT_LIST.md`](assets/video/SHOT_LIST.md) incl. NVIDIA × SPAN hardware proof |
 
 ## Quick start
 

@@ -52,6 +52,14 @@ Distributed micro/small data centers (1 kW – 250+ kW) can be built **inside gr
 | Heat reuse | Sell/self-consume waste heat on premises |
 | Green value | GO certificates + low-carbon SLA for compute customers |
 
+### Hardware proof — NVIDIA × SPAN
+
+The physical layer already exists. **NVIDIA's In-Home Mini Data Center** (16 GPUs, AMD EPYC, high-density RAM) runs AI inference from a compact rack sized for residential/commercial premises. **SPAN** (NVIDIA-backed smart panel) routes **unused household electricity** to the unit — turning surplus home power into compute instead of waste.
+
+**MicroDC Hub is the software layer on top:** SiteScore decides *where* to deploy this hardware (PLZ-level scoring); EarnMax decides *how* to run it profitably (24h forecast, load shifting, extra earnings in euros). Hardware proves feasibility; MicroDC Hub enables scale.
+
+Pitch visual: `assets/video/07-nvidia-span-hardware.png`
+
 ---
 
 ## 4. The Solution
