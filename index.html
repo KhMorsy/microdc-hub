@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MicroDC Hub — SiteScore + EarnMax</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root { --bg:#0d0a07; --bg2:#16100a; --card:#1d150d; --orange:#e8742c; --orange2:#f2a35c;
+          --text:#f0e9e2; --dim:#a89b8c; --green:#5fbf6e; --red:#e0584f; --line:#33271b; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-snap-type:y mandatory; }
+  body { background:var(--bg); color:var(--text); font-family:"Helvetica Neue",Arial,sans-serif; }
+  section { min-height:100vh; scroll-snap-align:start; padding:5vh 7vw; display:flex; flex-direction:column; justify-content:center;
+            background:radial-gradient(ellipse at 85% 110%, #2a160a 0%, var(--bg) 60%); border-bottom:1px solid var(--line); }
+  h1 { font-size:3.2rem; line-height:1.1; } h1 em,h2 em { color:var(--orange); font-style:normal; }
+  h2 { font-size:2.2rem; margin-bottom:1.6rem; }
+  h3 { color:var(--orange2); font-size:1.05rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.7rem; }
+  p,li { font-size:1.08rem; line-height:1.55; color:var(--text); }
+  .dim { color:var(--dim); } .small { font-size:.92rem; }
+  .kicker { color:var(--orange); letter-spacing:.25em; text-transform:uppercase; font-size:.85rem; margin-bottom:1rem; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:2.2rem; align-items:center; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; }
+  .grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:1.2rem; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1.3rem; }
+  .card h4 { color:var(--orange2); margin-bottom:.5rem; font-size:1.05rem; }
+  .card .num { font-size:1.9rem; font-weight:700; color:var(--orange); margin-bottom:.3rem; }
+  img.mock { width:100%; border-radius:12px; border:1px solid var(--line); box-shadow:0 18px 60px rgba(0,0,0,.55); }
+  ul { list-style:none; } ul li { padding-left:1.4rem; position:relative; margin-bottom:.55rem; }
+  ul li::before { content:"→"; color:var(--orange); position:absolute; left:0; }
+  .badge { display:inline-block; background:#22301f; color:var(--green); border:1px solid #2f4a2c; border-radius:6px;
+           padding:.15rem .55rem; font-size:.82rem; margin-right:.4rem; }
+  .badge.warn { background:#33200f; color:var(--orange2); border-color:#4a3018; }
+  table { width:100%; border-collapse:collapse; margin-top:.6rem; }
+  th,td { text-align:left; padding:.55rem .7rem; border-bottom:1px solid var(--line); font-size:.98rem; }
+  th { color:var(--orange2); font-weight:600; }
+  .mermaid { background:var(--bg2); border:1px solid var(--line); border-radius:12px; padding:1rem; display:flex; justify-content:center; }
+  .footer { position:fixed; bottom:14px; right:18px; color:var(--dim); font-size:.8rem; z-index:9; }
+  .pkg { border-top:4px solid var(--orange); }
+  .vs { display:flex; gap:1.2rem; margin-top:1rem; }
+  .vs > div { flex:1; }
+</style>
+</head>
+<body>
+
+<!-- 1 · TITLE -->
+<section>
+  <div class="kicker">MicroDC Hub · Invertix Challenge · Data-Center Siting &amp; Power</div>
+  <h1><em>MicroDC Hub</em></h1>
+  <p style="font-size:1.35rem; margin-top:.6rem; max-width:48rem; color:var(--dim);">SiteScore + EarnMax</p>
+  <p style="font-size:1.5rem; margin-top:1.2rem; max-width:48rem;">Distributed data centers, <em style="color:var(--orange); font-style:normal;">sited right</em> and <em style="color:var(--orange); font-style:normal;">operated as a grid asset</em>.</p>
+  <p class="dim" style="margin-top:1.6rem;">One-time siting decision report &nbsp;·&nbsp; Yearly operations co-pilot subscription</p>
+  <p class="dim small" style="margin-top:3rem;">Data: PyPSA-Eur · Ember · OpenStreetMap · IEA Energy &amp; AI · SMARD</p>
+</section>
+
+<!-- 2 · PROBLEM -->
+<section>
+  <h3>The Problem</h3>
+  <h2>AI demand is exploding. <em>Electricity is the binding constraint.</em></h2>
+  <div class="grid3">
+    <div class="card"><div class="num">1</div><h4>Grid &amp; production bottleneck</h4>
+      <p class="small">Central data centers wait years for grid connections. Many regions are effectively closed to new large loads.</p></div>
+    <div class="card"><div class="num">2</div><h4>Clean power value is lost</h4>
+      <p class="small">Renewables get curtailed; green-certificate and carbon-reporting value goes unexploited because load sits in the wrong place at the wrong time.</p></div>
+    <div class="card"><div class="num">3</div><h4>Flexibility mismatch</h4>
+      <p class="small">Central DCs run flat 24/7. The grid increasingly pays for flexible load — and compute is the most shiftable load there is.</p></div>
+  </div>
+  <div class="card pkg" style="margin-top:1.4rem;">
+    <h4>The opportunity</h4>
+    <p>Distributed micro/small data centers (1 kW – 250+ kW) can be built <strong>inside grid-restricted areas</strong>, next to surplus renewables and heat demand — if owners and prosumers know <strong>where to build</strong> and <strong>how to operate</strong>.</p>
+  </div>
+</section>
+
+<!-- 3 · KEY INSIGHT -->
+<section>
+  <h3>Our Angle</h3>
+  <h2>Compute that <em>follows power</em> — not power that chases compute.</h2>
+  <div class="grid2">
+    <div>
+      <ul>
+        <li><strong>Siting:</strong> a constrained grid is not a wall, it's a map. Score every node by what actually drives value.</li>
+        <li><strong>Operation:</strong> a batchable compute load is a <strong>grid asset</strong>. It earns money by being flexible, it doesn't just save money.</li>
+        <li><strong>Heat:</strong> for micro DCs on prosumer premises, reused waste heat can nearly double the value of every kWh.</li>
+      </ul>
+      <p class="dim small" style="margin-top:1rem;">We deliberately say <strong>carbon intensity &amp; certificate value</strong> (gCO₂/kWh, GOs, CSRD reporting) — not "carbon credits", which consuming green power does not generate in the EU.</p>
+    </div>
+    <div class="card">
+      <h4>The flexibility value stack (per node)</h4>
+      <table>
+        <tr><th>Layer</th><th>Mechanism</th></tr>
+        <tr><td>Spot arbitrage</td><td>Shift batch compute to cheap day-ahead/intraday hours</td></tr>
+        <tr><td>Peak shaving</td><td>Reduced grid fees (e.g. §19 StromNEV atypical usage)</td></tr>
+        <tr><td>Heat reuse</td><td>Sell/self-consume waste heat on premises</td></tr>
+        <tr><td>Green value</td><td>GO certificates + low-carbon SLA for compute customers</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · SOLUTION OVERVIEW -->
+<section>
+  <h3>The Solution</h3>
+  <h2>Two packages: <em>decide once, earn forever.</em></h2>
+  <div class="vs">
+    <div class="card pkg">
+      <h4>Package 1 · SiteScore <span class="badge warn">one-time</span></h4>
+      <p class="small" style="margin-bottom:.6rem;"><strong>"Where and what should I build?"</strong></p>
+      <ul class="small">
+        <li>Input: capacity category (Edge 1–5 kW → Campus 250+ kW) and/or address</li>
+        <li>Map of scored <strong>postal-code areas</strong> (~8,200 PLZ in DE): composite score + 5 explainable subscores</li>
+        <li>Yearly power mix per node (wind / solar / grid)</li>
+        <li>Carbon intensity badge (low / mid / high, gCO₂/kWh)</li>
+        <li>Status-quo evaluation + <strong>boost proposals</strong>: add battery, resize, relocate → score delta</li>
+      </ul>
+    </div>
+    <div class="card pkg">
+      <h4>Package 2 · EarnMax <span class="badge">yearly subscription</span></h4>
+      <p class="small" style="margin-bottom:.6rem;"><strong>"How do I run it for maximum value?"</strong></p>
+      <ul class="small">
+        <li>24 h energy &amp; price forecast → <strong>recommended operation profile</strong> (10–30% lower energy cost for shiftable load)</li>
+        <li>Earnings dashboard: € <strong>extra</strong> earned + saved vs. unmanaged operation (arbitrage, peak shaving, heat, certificates)</li>
+        <li>Node monitoring next 3–6 h: thermal headroom, power safety limits, alerts</li>
+        <li>Carbon-aware scheduling windows for green-SLA workloads</li>
+      </ul>
+      <div style="margin-top:.9rem; background:#22301f; border:1px solid #2f4a2c; border-radius:10px; padding:.8rem 1rem;">
+        <p class="small" style="color:var(--green); font-weight:700; margin-bottom:.4rem;">Extra earnings vs. running it yourself — 30 kW container DC</p>
+        <table class="small" style="margin-top:0;">
+          <tr><td style="color:var(--dim);">Without EarnMax (flat profile, standard tariff)</td><td style="text-align:right;">baseline</td></tr>
+          <tr><td style="color:var(--green);">+ Spot shifting €7,900 · peak shaving €2,100 · heat reuse €4,000 · certificates €500</td><td style="text-align:right; color:var(--green);">+€14,500/yr</td></tr>
+          <tr><td style="color:var(--orange2);">− EarnMax subscription</td><td style="text-align:right; color:var(--orange2);">−€2,400/yr</td></tr>
+          <tr><td style="font-weight:700; color:var(--green);">Net extra in the operator's pocket</td><td style="text-align:right; font-weight:700; color:var(--green);">+€12,100/yr (~6×)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <p class="dim small" style="margin-top:1rem;">Business model: SiteScore funds customer acquisition (paid report); EarnMax is the recurring revenue. Every SiteScore customer is an EarnMax lead.</p>
+</section>
+
+<!-- 5 · MOCK UI PACKAGE 1 -->
+<section>
+  <h3>Package 1 · SiteScore — UI mock</h3>
+  <div class="grid2" style="grid-template-columns: 2.2fr 1fr;">
+    <img class="mock" src="assets/mock-sitescore.png" alt="SiteScore UI">
+    <div>
+      <ul class="small">
+        <li><strong>Input:</strong> capacity category pills + postal code (PLZ)</li>
+        <li><strong>Map:</strong> green/red PLZ polygons, one node per postal-code area — fine enough resolution for micro-DC siting</li>
+        <li><strong>Node detail:</strong> composite 82/100 + subscores (grid headroom, price, carbon, flexibility, heat reuse)</li>
+        <li><strong>Power mix donut</strong> and carbon-intensity badge</li>
+        <li><strong>"Boost this site":</strong> toggle a 20 kWh battery → +6 pts, live re-score</li>
+      </ul>
+      <p class="dim small" style="margin-top:.8rem;">The boost toggles are the demo moment: trade-offs become visible and actionable.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · MOCK UI PACKAGE 2 -->
+<section>
+  <h3>Package 2 · EarnMax — UI mock</h3>
+  <div class="grid2" style="grid-template-columns: 2.2fr 1fr;">
+    <img class="mock" src="assets/mock-earnmax.png" alt="EarnMax UI">
+    <div>
+      <ul class="small">
+        <li><strong>Forecast chart:</strong> 24 h price forecast with recommended load profile overlaid ("shift batch jobs here")</li>
+        <li><strong>Monitoring next 6 h:</strong> thermal headroom, power draw vs. safety limit, predictive alert</li>
+        <li><strong>Value stack today:</strong> € per layer — headline is <strong>€ earned + € saved</strong> (10–30% on energy cost via load shifting)</li>
+        <li><strong>Carbon now</strong> + best green window</li>
+      </ul>
+      <div style="margin-top:.8rem; background:#22301f; border:1px solid #2f4a2c; border-radius:10px; padding:.7rem .9rem;">
+        <p class="small" style="color:var(--green);"><strong>The customer math:</strong> the €1,240/month shown is <em>extra</em> earnings vs. running the same node without EarnMax. Minus the €200/month subscription → <strong>net +€1,040/month on top of his normal business</strong> — the dashboard proves it daily.</p>
+      </div>
+      <p class="dim small" style="margin-top:.8rem;">Recommendations, not actuation — honest scope for a 5-hour build, extensible to control later.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · SCORING MODEL -->
+<section>
+  <h3>How a node is scored</h3>
+  <h2>One number to decide, <em>five numbers to explain.</em></h2>
+  <div class="grid4">
+    <div class="card"><h4>Grid headroom · 30%</h4><p class="small dim">Congestion / spare connection capacity at the node (PyPSA-Eur network data).</p></div>
+    <div class="card"><h4>Energy price · 25%</h4><p class="small dim">Expected procurement cost from zonal prices + local generation profile.</p></div>
+    <div class="card"><h4>Carbon · 20%</h4><p class="small dim">Yearly average + marginal gCO₂/kWh from the local power mix (Ember).</p></div>
+    <div class="card"><h4>Flexibility value · 15%</h4><p class="small dim">Daily price spread → arbitrage potential for shiftable compute.</p></div>
+  </div>
+  <div class="grid2" style="margin-top:1.2rem;">
+    <div class="card"><h4>Heat reuse · 10%</h4><p class="small dim">Heat-demand proximity from OpenStreetMap (pools, large buildings, greenhouses) — the unique pro-distributed argument.</p></div>
+    <div class="card"><h4>Boost simulation</h4><p class="small dim">Battery add-on raises grid-headroom &amp; flexibility subscores; resizing moves the node into a different connection class. Same formula, new inputs → transparent score delta.</p></div>
+  </div>
+  <p class="dim small" style="margin-top:1rem;">Weights are config, not code — tunable live during the demo. Categories (Edge / Micro / Container / Small / Campus) set defaults; the score itself is continuous.</p>
+</section>
+
+<!-- 8 · ARCHITECTURE -->
+<section>
+  <h3>Architecture</h3>
+  <h2>Thin live stack, <em>heavy lifting precomputed.</em></h2>
+  <pre class="mermaid">
+flowchart LR
+  subgraph OFF["Offline pipeline (Python, runs once before demo)"]
+    DS["PyPSA-Eur · Ember · SMARD · MaStR · OSM"] --> ETL["ETL + scoring notebook"]
+    ETL --> GJ["plz_nodes.geojson (PLZ polygons: subscores, mix, carbon)"]
+    ETL --> TS["profiles.parquet (hourly price / wind / solar)"]
+  end
+  subgraph BE["Backend · FastAPI"]
+    GJ --> API1["GET /nodes?kw=&plz="]
+    TS --> API2["GET /forecast/:node"]
+    API2 --> OPT["Heuristic optimizer: shift load to cheap-green hours"]
+    SIM["Synthetic telemetry generator"] --> API3["GET /monitor/:node"]
+  end
+  subgraph FE["Frontend · React + Vite"]
+    API1 --> MAP["MapLibre map + node panel (SiteScore)"]
+    OPT --> DASH["Recharts dashboard (EarnMax)"]
+    API3 --> DASH
+    MAP --> BOOST["Boost toggles: re-score client-side"]
+  end
+  style OFF fill:#16100a,stroke:#33271b,color:#f0e9e2
+  style BE fill:#16100a,stroke:#33271b,color:#f0e9e2
+  style FE fill:#16100a,stroke:#33271b,color:#f0e9e2
+  </pre>
+  <p class="dim small" style="margin-top:.9rem;">No auth, no DB, no ML training. Scores live in a static GeoJSON; the API is three read endpoints plus a rule-based optimizer. Everything demo-critical works even if Wi-Fi dies (data is local).</p>
+</section>
+
+<!-- 9 · STACK + 5H PLAN -->
+<section>
+  <h3>Tech stack &amp; 5-hour plan</h3>
+  <div class="grid2">
+    <div>
+      <h2 style="font-size:1.6rem;">Stack</h2>
+      <table>
+        <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+        <tr><td>Frontend</td><td>React + Vite + MapLibre GL + Recharts</td><td>Fast scaffold, free map tiles, quick charts</td></tr>
+        <tr><td>Backend</td><td>FastAPI (Python)</td><td>Same language as data pipeline, instant docs</td></tr>
+        <tr><td>Data</td><td>GeoJSON + Parquet files</td><td>No DB to set up, versionable, offline-safe</td></tr>
+        <tr><td>Pipeline</td><td>Pandas notebook</td><td>Ember/SMARD CSVs → scores, run once</td></tr>
+        <tr><td>Optimizer</td><td>Greedy heuristic</td><td>Sort hours by price·carbon, fill load — explainable</td></tr>
+      </table>
+    </div>
+    <div>
+      <h2 style="font-size:1.6rem;">5 hours, 4 people</h2>
+      <table>
+        <tr><th>Hour</th><th>Deliverable</th></tr>
+        <tr><td>0–1</td><td>Repo + scaffold; data person scores PLZ polygons; UI person sets dark theme</td></tr>
+        <tr><td>1–2</td><td>Map renders scored PLZ areas; FastAPI serves /nodes; forecast profiles loaded</td></tr>
+        <tr><td>2–3</td><td>Node detail panel (subscores, mix, carbon); optimizer + forecast chart</td></tr>
+        <tr><td>3–4</td><td>Boost toggles re-score; monitoring panel with synthetic telemetry + alert</td></tr>
+        <tr><td>4–5</td><td>Value-stack numbers, polish, rehearse demo, freeze</td></tr>
+      </table>
+      <p class="dim small" style="margin-top:.7rem;">Cut order if late: monitoring panel → boost toggles → value stack. The map + score + forecast is the irreducible demo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · DEMO FLOW -->
+<section>
+  <h3>Pitch &amp; demo flow (3 min)</h3>
+  <h2>From <em>"can't build here"</em> to <em>"earning here".</em></h2>
+  <ul>
+    <li><strong>Hook (20 s):</strong> "Grid connections, not GPUs, are the bottleneck. We turn restricted grid areas into the best places to build."</li>
+    <li><strong>SiteScore (60 s):</strong> Select "Container 10–50 kW", type "80933" → the postal-code area lights up at 82/100 among its neighbors → show subscores, power mix, carbon badge.</li>
+    <li><strong>Boost (30 s):</strong> Toggle the 20 kWh battery → score jumps +6. "That's the report the customer pays for once."</li>
+    <li><strong>EarnMax (60 s):</strong> Jump to the dashboard → forecast with recommended load profile → value stack "€56 today, +€1,240 extra this month, net +€1,040 after the fee" → thermal alert for 14:00. "That's the subscription."</li>
+    <li><strong>Close (10 s):</strong> "Decide once with SiteScore. Earn every day with EarnMax — that's MicroDC Hub."</li>
+  </ul>
+  <p class="dim small" style="margin-top:1.4rem;">Navigate this deck: scroll or ↑/↓ keys.</p>
+</section>
+
+<div class="footer">MicroDC Hub · SiteScore + EarnMax</div>
+<script>
+  mermaid.initialize({ startOnLoad:true, theme:"dark", themeVariables:{ primaryColor:"#1d150d", primaryBorderColor:"#e8742c", lineColor:"#a89b8c", primaryTextColor:"#f0e9e2", fontSize:"14px" }});
+  document.addEventListener("keydown", e => {
+    const s = [...document.querySelectorAll("section")];
+    const i = s.findIndex(x => x.getBoundingClientRect().top > -10);
+    if (e.key === "ArrowDown" && i < s.length) (s[i+1]||s[i]).scrollIntoView({behavior:"smooth"});
+    if (e.key === "ArrowUp" && i > 0) s[i-1].scrollIntoView({behavior:"smooth"});
+  });
+</script>
+</body>
+</html>
